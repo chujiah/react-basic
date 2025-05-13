@@ -7,7 +7,12 @@ class Mynav extends Component {
         let lists = []
 
         data.forEach(v => {
-            lists.push(<li key={v.id}><a href="/">{v.title}</a></li>);
+            lists.push(<li key={v.id}><a href="/"
+            onClick={(e) => {
+               e.preventDefault();
+               this.props.onChangePage(v.id);
+            }}
+            >{v.title}</a></li>);
         });
 
         // let i = 0;

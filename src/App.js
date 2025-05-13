@@ -9,7 +9,8 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            mode:'read',
+            mode:'welcome',
+            selected_id:2,
             welcome: {
                 title:'welcome',
                 desc:'Welcome to FrontEnd'
@@ -32,8 +33,9 @@ class App extends Component {
             _title = this.state.welcome.title;
             _desc = this.state.welcome.desc;
         } else if (this.state.mode === 'read') {
-            _title = this.state.menus[0].title;
-            _desc = this.state.menus[0].desc;
+            let idx = this.state.menus.findIndex(item => item.id === this.state.selected_id);
+            _title = this.state.menus[idx].title;
+            _desc = this.state.menus[idx].desc;
         }
         return (
             <div className='App'>
@@ -52,7 +54,14 @@ class App extends Component {
                 {/*    </h1>*/}
                 {/*    <p>{this.state.subject.desc}</p>*/}
                 {/*</header>*/}
-                <Mynav data={this.state.menus} />
+                <Mynav data={this.state.menus}
+                onChangePage = {(id) => {
+                    this.setState({
+                        mode:'read',
+                        selected_id:id
+                    });
+                }}
+                />
                 <Myarticle title={_title} desc={_desc} />
             </div>
     );
