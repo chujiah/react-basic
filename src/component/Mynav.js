@@ -1,6 +1,15 @@
 import React, {Component} from "react";
 
 class Mynav extends Component {
+    shouldComponentUpdate(newProps, newState) {
+        console.log("sh 작동");
+        console.log(newProps.data, this.props.data)
+        if (newProps.data === this.props.data) {
+            return false;
+        }
+        return true;
+    }
+
     render() {
         console.log("Mynav 실행");
         let data = this.props.data;

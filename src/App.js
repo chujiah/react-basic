@@ -1,13 +1,15 @@
 import './App.css';
+import React, {Component} from 'react';
 import Myheader from "./component/Myheader";
 import Mynav from "./component/Mynav";
-import Myarticle from "./component/Myarticle";
-
-import React, {Component} from 'react';
+import ReadArticle from "./component/ReadArticle";
+import CreateArticle from "./component/CreateArticle";
+import UpdateArticle from "./component/UpdateArticle";
 
 class App extends Component {
     constructor(props) {
         super(props);
+        this.max_menu_id = 3;
         this.state = {
             mode:'welcome',
             selected_id:2,
@@ -26,46 +28,92 @@ class App extends Component {
             ]
         }
     }
-    render() {
-        console.log('App 실행');
-        let _title, _desc = null;
+
+    getReadArticle() {
+        let idx = this.state.menus.findIndex(item => item.id === this.state.selected_id);
+        let data = this.state.menus[idx];
+        return data;
+    }
+
+    getArticles() {
+        let _title, _desc, _article = null;
         if (this.state.mode === 'welcome') {
             _title = this.state.welcome.title;
             _desc = this.state.welcome.desc;
+            _article =  <ReadArticle title={_title} desc={_desc} mode={this.state.mode}/>
         } else if (this.state.mode === 'read') {
-            let idx = this.state.menus.findIndex(item => item.id === this.state.selected_id);
-            _title = this.state.menus[idx].title;
-            _desc = this.state.menus[idx].desc;
+            let _data = this.getReadArticle();
+            _article =  <ReadArticle title={_data.title} desc={_data.desc} onChangeMode={(_mode) => {
+                this.setState({
+                    mode:_mode
+                })
+            }}/>
+        } else if (this.state.mode === 'create') {
+            _article =  <CreateArticle onSubmit={(_title, _desc) => {
+                this.max_menu_id += 1;
+                let _menus = this.state.menus.concat(
+                    {id:this.max_menu_id, title:_title, desc:_desc}
+                )
+
+                this.setState({
+                    menus:_menus,
+                    mode:'read',
+                    selected_id:this.max_menu_id
+                })
+
+            }}/>
+        } else if (this.state.mode === 'update') {
+            let _content = this.getReadArticle();
+            _article =  <UpdateArticle data={_content} onSubmit={(_id, _title, _desc) => {
+                let _menus = Array.from(this.state.menus);
+                _menus.forEach((item, index) => {
+                    if (item.id === _id) {
+                        _menus[index] = {id: _id, title:_title, desc:_desc}
+                    }
+                })
+                this.setState({
+                    menus:_menus,
+                    mode:'read'
+                })
+
+            }}/>
         }
+
+        return _article;
+    }
+    render() {
+        console.log('App 실행');
+
         return (
             <div className='App'>
                 <Myheader
                     title={this.state.subject.title}
                     desc={this.state.subject.desc}
-                    onChangeMode = {() => { this.setState({mode:'welcome'})}}/>
-                {/*<header>*/}
-                {/*    <h1 className="logo">*/}
-                {/*        <a href="/"*/}
-                {/*        onClick={(e) => {*/}
-                {/*            e.preventDefault();*/}
-                {/*            this.setState({mode:'welcome'})*/}
-                {/*        }}>{this.state.subject.title}*/}
-                {/*        </a>*/}
-                {/*    </h1>*/}
-                {/*    <p>{this.state.subject.desc}</p>*/}
-                {/*</header>*/}
+                    onChangeMode={() => {
+                        this.setState({mode: 'welcome'})
+                    }}/>
                 <Mynav data={this.state.menus}
-                onChangePage = {(id) => {
-                    this.setState({
-                        mode:'read',
-                        selected_id:id
-                    });
-                }}
+                       onChangePage={(id) => {
+                           this.setState({
+                               mode: 'read',
+                               selected_id: id
+                           });
+                       }}
                 />
-                <Myarticle title={_title} desc={_desc} />
+                {this.getArticles()}
+                <hr/>
+                <div className="menu">
+                    <button type="button" className="primary" onClick={() => {
+                        this.setState({
+                            mode:"create"
+                        })
+                    }}>
+                        Create task
+                    </button>
+                </div>
             </div>
-    );
-  }
+        );
+    }
 }
 
 export default App;
