@@ -44,9 +44,21 @@ class App extends Component {
         } else if (this.state.mode === 'read') {
             let _data = this.getReadArticle();
             _article =  <ReadArticle title={_data.title} desc={_data.desc} onChangeMode={(_mode) => {
-                this.setState({
-                    mode:_mode
-                })
+                if (_mode === 'delete') {
+                    if(window.confirm('정말 삭제할까요 ?')) {
+                        let _menus = Array.from(this.state.menus);
+                        let idx = _menus.findIndex(item => item.id === this.state.selected_id);
+                        _menus.splice(idx,1);
+                        this.setState({
+                            menus: _menus,
+                            mode: 'welcome'
+                        })
+                    }
+                } else {
+                    this.setState({
+                        mode:_mode
+                    })
+                }
             }}/>
         } else if (this.state.mode === 'create') {
             _article =  <CreateArticle onSubmit={(_title, _desc) => {

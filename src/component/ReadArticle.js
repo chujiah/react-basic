@@ -11,8 +11,16 @@ class ReadArticle extends Component {
                     <h2>{this.props.title}</h2>
                     <p>{this.props.desc}</p>
                     <ul className={classNames}>
-                        <li><a href="/update" className="secondary">update</a></li>
-                        <li><input type="button" className="danger" value="delete"/></li>
+                        <li><a href="/update" className="secondary"
+                        onClick={e => {
+                            e.preventDefault();
+                            this.props.onChangeMode('update');
+                        }}>update</a></li>
+                        <li><input type="button" className="danger" value="delete"
+                                   onClick={e => {
+                                       e.preventDefault();
+                                       this.props.onChangeMode('delete');
+                                   }}/></li>
                     </ul>
                 </article>
             </section>
